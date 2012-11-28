@@ -1,7 +1,9 @@
-@(message: String)
-
-@main("Welcome to Play 2.0") {
-    
-    @play20.welcome(message, style = "Java")
-    
+@main(title = "Shopping Cart"){
+    <ul id="items"></ul>
+    @helper.form(action = routes.Application.addItem()){
+        <label>Name</label><input name="name" /><br>
+        <label>Quantity</label><input name="quantity" /><br>
+        <label>Price</label><input name="price" /><br>
+        <input type="submit" />
+    }
 }
