@@ -1,5 +1,6 @@
 package models;
 
+import com.mysql.jdbc.Blob;
 import play.db.ebean.Model;
 import javax.persistence.Entity;
 import javax.persistence.*;
