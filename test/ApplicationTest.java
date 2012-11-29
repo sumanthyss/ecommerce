@@ -6,7 +6,7 @@ import static org.fest.assertions.Assertions.*;
 import static play.mvc.Http.Status.*;
 import static play.test.Helpers.*;
 
-public class ApplicationTest
+public class ApplicationTest extends BaseTest
 {
     @Test
     public void callIndex()

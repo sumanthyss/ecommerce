@@ -45,7 +45,7 @@ public class Application extends Controller {
           File sourceFile = picture.getFile();
           String extension = contentType.split("/")[1];
           if (sourceFile.length() > 100000) throw new Exception("File type is too large");
-          InventoryItem newItem = new InventoryItem(itemName, price, quantity);
+          InventoryItem newItem = new InventoryItem(itemName, price, quantity, extension);
           newItem.save();
           File destFile = new File("public/images/" +itemName +"." +extension);
           if(!destFile.exists()) destFile.createNewFile();

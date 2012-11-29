@@ -4,7 +4,7 @@ import play.mvc.Result;
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
 
-public class RouteTest
+public class RouteTest extends BaseTest
 {
     @Test
     public void testRootRoute()

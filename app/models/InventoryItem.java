@@ -15,14 +15,16 @@ import javax.persistence.*;
 @Entity
 public class InventoryItem extends Model
 {
-    public InventoryItem(String name, Double price, Integer quantity)
+    public InventoryItem(String name, Double price, Integer quantity, String extension)
     {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
+        this.imgPath = "/assets/images/" +this.name +"." +extension;
     }
     @Id
     public String name;
     public Double price;
     public Integer quantity;
+    public String imgPath;
 }

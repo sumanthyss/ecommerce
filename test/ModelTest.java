@@ -12,18 +12,14 @@ import static org.fest.assertions.Assertions.assertThat;
  * Time: 7:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ModelTest
+public class ModelTest extends BaseTest<InventoryItem>
 {
 
     @Test
     public void newItem()
     {
-        running(fakeApplication(), new Runnable() {
-            public void run() {
-                InventoryItem item = new InventoryItem("apple", 0.5, 10);
-                item.save();
-                assertThat(item.price).isEqualTo(0.5);
-            }
-        });
+        InventoryItem item = new InventoryItem("apple", 0.5, 10, "png");
+        item.save();
+        assertThat(item.price).isEqualTo(0.5);
     }
 }
