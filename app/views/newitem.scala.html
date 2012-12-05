@@ -1,0 +1,10 @@
+@main("Shopping Cart"){
+    <ul id="items" class="unstyled"></ul>
+    @helper.form(action = routes.Application.addItem(), 'enctype-> "multipart/form-data"){
+        <label>Name</label><input name="name" /><br>
+        <label>Quantity</label><input name="quantity" /><br>
+        <label>Price</label><input name="price" /><br>
+        <label>Image</label><input type="file" name="image"><br>
+        <input type="submit" />
+    }
+}

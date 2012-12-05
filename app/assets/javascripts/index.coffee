@@ -1,4 +1,14 @@
-$ ->
-  $.get "/items", (data) ->
-    $.each data, (index, item) ->
-      $('#items').append($('<li>')).append("<table><tr><td>#{item.name}</td></tr><tr><td><img src='#{item.imgPath}'</td></tr></table>")
+$(document).on 'click', '#testLink', () ->
+  url = "/shoppinglist"
+  myJSObject =
+    budget: 4.22
+    items  : [
+      {name: 'apple', priority: 1}
+      {name: 'banana', priority: 2}
+    ]
+  $.ajax url,
+    data : JSON.stringify(myJSObject)
+    contentType : 'application/json'
+    type : 'POST'
+    success: (data) ->
+      console.log data

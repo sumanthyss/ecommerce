@@ -1,10 +1,10 @@
-@main(title = "Shopping Cart"){
-    <ul id="items" class="unstyled"></ul>
-    @helper.form(action = routes.Application.addItem(), 'enctype-> "multipart/form-data"){
-        <label>Name</label><input name="name" /><br>
-        <label>Quantity</label><input name="quantity" /><br>
-        <label>Price</label><input name="price" /><br>
-        <label>Image</label><input type="file" name="image"><br>
-        <input type="submit" />
-    }
+@(items: List[InventoryItem])
+
+@main("Shopping Cart"){
+    <a href="#" id="testLink">Click me</a>
+    <ul id="items" class="unstyled">
+        @for(item <- items){
+            <li>@item.name ($@item.price)</li>
+        }
+    </ul>
 }
