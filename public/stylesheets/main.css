@@ -1,4 +1,48 @@
 body{
-    padding-top: 40px;
+    padding-top: 50px;
     padding-left: 10px;
+}
+
+#itemThumbnail {
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+
+.cartEntry{
+  display: inline-block;
+  width: 100%;
+  padding: 2px 2px 2px 2px;
+  border-bottom: 1px white solid;
+  margin-top: -10px;
+}
+.cartEntry h4 {
+  display: inline;
+}
+
+#shoppingCart {
+  text-align: center;
+  min-height: 250px;
+}
+#checkoutBtn {
+  width: 100%;
+  margin-right: -12px;
+  margin-left: -12px;
+}
+.close.removeItem {
+  margin-right: 10px;
+}
+.cartEntry .numInCart {
+  width: 50px;
+  margin: 5px 0px 2px 5px;
+}
+.itemSummary {
+  margin-top: 4px;
+  margin-bottom: 2px;
+  padding-top: 4px;
+}
+#priorityTable th , #priorityTable td{
+  text-align: center;
+}
+#priorityModal .well {
+  margin-bottom: 0px;
 }

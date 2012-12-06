@@ -1,10 +1,42 @@
 @(items: List[InventoryItem])
 
 @main("Shopping Cart"){
-    <a href="#" id="testLink">Click me</a>
-    <ul id="items" class="unstyled">
-        @for(item <- items){
-            <li>@item.name ($@item.price)</li>
-        }
-    </ul>
+    <div class="container-fluid">
+        <div class="row-fluid" id="inventoryList">
+            <div class="span9">
+                <ul id="items" class="thumbnails">
+                    @for(item <- items){
+                        <li class="span3" id="itemThumbnail">
+                            <div class="thumbnail" data-name="@item.name" data-quantity="@item.quantity" data-price="@item.price">
+                                <img src="@item.imgPath" />
+                                <div style="text-align: center">
+                                    <h4>
+                                        @item.name
+                                        <small>
+                                            @item.price
+                                        </small>
+                                    </h4>
+                                    <p>Quantity: @item.quantity</p>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="span3 well">
+                <div id="shoppingCart">
+                    <h4>
+                        <small>Your Cart</small>
+                    </h4> <hr />
+                </div>
+                <a href="#" class="btn btn-info disabled" id="checkoutBtn">
+                    Checkout
+                </a>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12" id="purchaseSummary">
+            </div>
+        </div>
+    </div>
 }

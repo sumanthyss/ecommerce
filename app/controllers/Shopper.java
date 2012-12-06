@@ -45,8 +45,7 @@ public class Shopper extends Controller
             return badRequest(result);
         } else {
             result.put("status", "OK");
-            result.put("budget", budget);
-            result.put("message", items);
+            result.put("request", json);
             return ok(result);
         }
     }

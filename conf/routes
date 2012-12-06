@@ -13,7 +13,7 @@ POST    /add/an/item                controllers.Application.addItem()
 GET     /inventory                  controllers.Application.getInventory()
 
 # Calculate the purchase
-POST    /shoppinglist               controllers.Shopper.goShopping()
+POST    /checkout                   controllers.Shopper.goShopping()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
