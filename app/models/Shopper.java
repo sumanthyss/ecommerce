@@ -50,7 +50,7 @@ public class Shopper
             public int compare(ObjectNode itemOne, ObjectNode itemTwo) {
                 Integer intOne = itemOne.get("priority").asInt();
                 Integer intTwo = itemTwo.get("priority").asInt();
-                int comparison = intOne.compareTo(intTwo);
+                int comparison = intOne.compareTo(intTwo) * -1; // reverse order, higher numbers should come first
                 if (comparison == 0) {
                     Double priceOne = itemOne.get("price").asDouble();
                     Double priceTwo = itemTwo.get("price").asDouble();
@@ -65,16 +65,54 @@ public class Shopper
         ArrayNode notbought = JsonNodeFactory.instance.arrayNode();
         double totalcost = 0.0;
         double spent = 0.0;
+        int currentIndex = 0;
+
         Iterator<ObjectNode> buyer = cart.iterator();
+
         while (buyer.hasNext())
         {
+
             ObjectNode node = buyer.next();
-            while (spent < budget && node.get("buying").asInt() > 0)
+
+            double price = node.get("price").asDouble();
+            int startingQuantity = node.get("buying").asInt();
+            int numLeftToBuy = startingQuantity;
+            totalcost += startingQuantity * price;
+
+            while ((spent + price) < budget && numLeftToBuy > 0)
             {
+                System.out.println(node.get("name").asText() + " " + startingQuantity + " " + numLeftToBuy + " " + currentIndex);
+                //Object hasn't been added to the array
+                if (numLeftToBuy == startingQuantity)
+                {
+                    //Add the item and set quantity bought to 1
+                    bought.add(node);
+                    ( (ObjectNode) bought.get(currentIndex)).put("buying", 1);
 
+                    //Subtract 1 from the node and numLeftToBuy
+                    numLeftToBuy--;
+                    spent += price;
+                }
+                else //Increment the item that's already in the array
+                {
+                    //We'll reverse these operations because we can use the decremented numLeft to evaluate
+                    //how much has now been bought
+
+                    numLeftToBuy--;
+                    ( (ObjectNode) bought.get(currentIndex)).put("buying", startingQuantity - numLeftToBuy);
+                    spent += price;
+                }
             }
+            if (numLeftToBuy > 0)
+            {
+                ObjectNode didntBuy = JsonNodeFactory.instance.objectNode();
+                didntBuy.putAll(node);
+                didntBuy.put("buying", numLeftToBuy);
+                notbought.add(didntBuy);
+            };
+            buyer.remove();
+            currentIndex++;
 
-            bought.add(node);
         }
         result.put("status", "OK");
         result.put("spent", spent);
