@@ -1,9 +1,15 @@
 package models;
 
 import com.mysql.jdbc.Blob;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.db.ebean.Model;
+import play.libs.Json;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,4 +33,20 @@ public class InventoryItem extends Model
     public Double price;
     public Integer quantity;
     public String imgPath;
+
+    public static Map<String, String> asMap(InventoryItem item)
+    {
+        Map<String, String> itemAsMap = new HashMap<String, String>();
+        itemAsMap.put("name", item.name);
+        itemAsMap.put("price", "" +item.price);
+        return itemAsMap;
+    }
+    public static ObjectNode asJsonNode(InventoryItem item)
+    {
+        ObjectNode node = Json.newObject();
+        node.put("name", item.name);
+        node.put("price", item.price);
+
+        return node;
+    }
 }

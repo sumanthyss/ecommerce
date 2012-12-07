@@ -12,7 +12,7 @@ $(document).on 'click', '#checkoutBtn', (event) ->
     buying = $(@).children('.numInCart').val()
     if $("#priorityTable ##{itemName}").length is 0
       $("#priorityTable").append """
-        <tr class='priorityRow id='#{itemName}' data-name='#{itemName}' data-buying='#{buying}'>
+        <tr class='priorityRow' id='#{itemName}' data-name='#{itemName}' data-buying='#{buying}'>
           <td><strong>#{itemName}</strong></td>
           <td>#{itemPrice}</td>
           <td class='priorityButtons'>
@@ -72,6 +72,17 @@ $(document).on 'click', '.removeItem', (event) ->
   $(@).parents('.cartEntry').remove()
   if $('#shoppingCart .cartEntry').length is 0 then $('#checkoutBtn').addClass('disabled')
 
+renderPurchaseSummary = (data) ->
+  resultStatus = data.status
+  if resultStatus is 'KO'
+    console.log "There was an error"
+    console.log data
+    return
+  budget = data.budget
+  value  = data.value
+  spent  = data.spent
+  buying = data.buying
+
 $(document).on 'click', '#startShopping', (event) ->
   event.preventDefault()
   event.stopPropagation()
@@ -94,7 +105,14 @@ $(document).on 'click', '#startShopping', (event) ->
       elementObj = {}
       elementObj.name = $(element).data 'name'
       elementObj.buying = $(element).data 'buying'
-      console.log $(element).children('.active').get(0).text()
+      priorityText = $(element).children('.priorityButtons')
+                              .children().children('.active').text()
+      switch priorityText
+        when 'Low' then elementObj.priority = 1
+        when 'Neutral' then elementObj.priority = 2
+        when 'High' then elementObj.priority = 3
+        else elementObj.priority = 0
+
       resultObj.items.push elementObj
     $.ajax url,
       data : JSON.stringify(resultObj)
