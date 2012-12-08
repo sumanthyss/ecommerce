@@ -1,6 +1,68 @@
+#############################################
+# Functions to run on document ready
+#############################################
 $ ->
   $('#shoppingCart').height($("html").height())
 
+#############################################
+# When the user clicks on one of the thumbnails, grab the relevant information
+# and make a div that gets placed in the shopping cart
+#############################################
+$(document).on 'click', '.thumbnail', (event) ->
+  event.preventDefault()
+  event.stopPropagation()
+  $item = $(@)
+  itemName = $item.data('name')
+  itemPrice = $item.data('price')
+  itemQuantity = $item.data('quantity')
+  inCartAlready = false
+  $('#checkoutBtn').removeClass('disabled')
+  $(".cartEntry").each (index, element) =>
+    if $(element).data('name') is itemName then inCartAlready = true
+  itemEntry = """
+              <div class='cartEntry' data-name='#{itemName}' data-price='#{itemPrice}' data-quantity='#{itemQuantity}'>
+                <input type='number' class='numInCart pull-right' value='1' min='1' max='#{itemQuantity}' />
+                <div class='pull-left itemSummary'>
+                  <button class="close pull-left removeItem">&times;</button>
+                  <h4>#{itemName}
+                    <small>#{itemPrice}</small>
+                  </h4>
+                </div>
+              </div>
+              """
+  if not inCartAlready then $("#shoppingCart").append itemEntry
+
+#############################################
+# Function to check whether the new quantity for an item in the cart is valid
+#############################################
+$(document).on 'change', '.numInCart', (event) ->
+  newVal = +$(@).val()
+  minVal = +$(@).attr('min')
+  maxVal = +$(@).attr('max')
+  validQuantity = maxVal >= newVal >= minVal
+  if not validQuantity
+    if newVal < minVal
+      $(@).val(minVal)
+    else if newVal > maxVal
+      $(@).val(maxVal)
+    else
+      $(@).val(minVal)
+
+#############################################
+# When the user clicks on one of the thumbnails, grab the relevant information
+# and make a div that gets placed in the shopping cart
+#############################################
+$(document).on 'click', '.removeItem', (event) ->
+  event.preventDefault()
+  event.stopPropagation()
+  $(@).parents('.cartEntry').remove()
+  if $('#shoppingCart .cartEntry').length is 0 then $('#checkoutBtn').addClass('disabled')
+
+#############################################
+# Handler for when the user wants to checkout.  First check whether there are items
+# in the cart (i.e. button disabled) and then extract the information for each item.
+# Finally, populate and render the prioritization modal.
+#############################################
 $(document).on 'click', '#checkoutBtn', (event) ->
   event.preventDefault()
   event.stopPropagation()
@@ -25,53 +87,12 @@ $(document).on 'click', '#checkoutBtn', (event) ->
         </tr>
       """
 
-$(document).on 'click', '.thumbnail', (event) ->
-  event.preventDefault()
-  event.stopPropagation()
-  $item = $(@)
-  itemName = $item.data('name')
-  itemPrice = $item.data('price')
-  itemQuantity = $item.data('quantity')
-  inCartAlready = false
-  $('#checkoutBtn').removeClass('disabled')
-  $(".cartEntry").each (index, element) =>
-    if $(element).data('name') is itemName then inCartAlready = true
-  itemEntry = """
-      <div class='cartEntry' data-name='#{itemName}'
-        data-price='#{itemPrice}' data-quantity='#{itemQuantity}'>
-        <input type='number' class='numInCart pull-right' value='1' min='1'
-           max='#{itemQuantity}' />
-        <div class='pull-left itemSummary'>
-          <span>
-            <button class="close pull-left removeItem">&times;</button>
-            <h4>#{itemName}
-              <small>#{itemPrice}</small>
-            </h4>
-          </span>
-        </div>
-      </div>
-  """
-  if not inCartAlready then $("#shoppingCart").append itemEntry
 
-$(document).on 'change', '.numInCart', (event) ->
-  newVal = +$(@).val()
-  minVal = +$(@).attr('min')
-  maxVal = +$(@).attr('max')
-  validQuantity = maxVal >= newVal >= minVal
-  if not validQuantity
-    if newVal < minVal
-      $(@).val(minVal)
-    else if newVal > maxVal
-      $(@).val(maxVal)
-    else
-      $(@).val(minVal)
-
-$(document).on 'click', '.removeItem', (event) ->
-  event.preventDefault()
-  event.stopPropagation()
-  $(@).parents('.cartEntry').remove()
-  if $('#shoppingCart .cartEntry').length is 0 then $('#checkoutBtn').addClass('disabled')
-
+#############################################
+# This is going to be the callback to the 'go shopping' ajax event
+# It needs to get the purchase information from the server and render
+# a summary
+#############################################
 renderPurchaseSummary = (data) ->
   resultStatus = data.status
   if resultStatus is 'KO'
@@ -83,6 +104,10 @@ renderPurchaseSummary = (data) ->
   spent  = data.spent
   buying = data.buying
 
+#############################################
+# Double check that the user entered the necessary information and then
+# submit their information to the server for calculation
+#############################################
 $(document).on 'click', '#startShopping', (event) ->
   event.preventDefault()
   event.stopPropagation()

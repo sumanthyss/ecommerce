@@ -79,7 +79,7 @@ public class Shopper
             int numLeftToBuy = startingQuantity;
             totalcost += startingQuantity * price;
 
-            while ((spent + price) < budget && numLeftToBuy > 0)
+            while ((spent + price) <= budget && numLeftToBuy > 0)
             {
                 System.out.println(node.get("name").asText() + " " + startingQuantity + " " + numLeftToBuy + " " + currentIndex);
                 //Object hasn't been added to the array
