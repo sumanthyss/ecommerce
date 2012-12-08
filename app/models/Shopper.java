@@ -61,8 +61,7 @@ public class Shopper
         });
 
         ObjectNode result = Json.newObject();
-        ArrayNode bought = JsonNodeFactory.instance.arrayNode();
-        ArrayNode notbought = JsonNodeFactory.instance.arrayNode();
+        ArrayNode processed = JsonNodeFactory.instance.arrayNode();
         double totalcost = 0.0;
         double spent = 0.0;
         int currentIndex = 0;
@@ -77,39 +76,22 @@ public class Shopper
             double price = node.get("price").asDouble();
             int startingQuantity = node.get("buying").asInt();
             int numLeftToBuy = startingQuantity;
+            int numBought = 0;
             totalcost += startingQuantity * price;
 
             while ((spent + price) <= budget && numLeftToBuy > 0)
             {
-                System.out.println(node.get("name").asText() + " " + startingQuantity + " " + numLeftToBuy + " " + currentIndex);
                 //Object hasn't been added to the array
-                if (numLeftToBuy == startingQuantity)
-                {
-                    //Add the item and set quantity bought to 1
-                    bought.add(node);
-                    ( (ObjectNode) bought.get(currentIndex)).put("buying", 1);
-
-                    //Subtract 1 from the node and numLeftToBuy
-                    numLeftToBuy--;
-                    spent += price;
-                }
-                else //Increment the item that's already in the array
-                {
-                    //We'll reverse these operations because we can use the decremented numLeft to evaluate
-                    //how much has now been bought
-
-                    numLeftToBuy--;
-                    ( (ObjectNode) bought.get(currentIndex)).put("buying", startingQuantity - numLeftToBuy);
-                    spent += price;
-                }
+                node.put("bought", ++numBought);
+                node.put("buying", --numLeftToBuy);
+                spent += price;
             }
             if (numLeftToBuy > 0)
             {
-                ObjectNode didntBuy = JsonNodeFactory.instance.objectNode();
-                didntBuy.putAll(node);
-                didntBuy.put("buying", numLeftToBuy);
-                notbought.add(didntBuy);
+                node.put("notbought", numLeftToBuy);
+                node.remove("buying");
             };
+            processed.add(node);
             buyer.remove();
             currentIndex++;
 
@@ -118,8 +100,7 @@ public class Shopper
         result.put("spent", spent);
         result.put("budget", budget);
         result.put("totalcost", totalcost);
-        result.put("bought", bought);
-        result.put("notbought", notbought);
+        result.put("processed", processed);
         return result;
     }
 }

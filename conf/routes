@@ -5,8 +5,7 @@
 # Home page
 GET     /                           controllers.Application.index()
 
-# Add an item
-GET     /add/an/item                controllers.Application.newItem()
+# Add a new item
 POST    /add/an/item                controllers.Application.addItem()
 
 # Get all items

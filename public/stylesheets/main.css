@@ -65,5 +65,7 @@ body{
     margin-left: -30px;
     padding-top: 100px;
     padding-left: 16%;
-
+}
+#addItemForm #price{
+    width: 180px;
 }

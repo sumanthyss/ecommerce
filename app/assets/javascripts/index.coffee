@@ -5,6 +5,18 @@ $ ->
   console.log $("#inventoryList").height()
   $('#shoppingCart').height("50px")
 
+$(document).on 'click', '#addItem', (event) ->
+  event.stopPropagation()
+  event.preventDefault()
+  $('#addItemModal').modal()
+
+$(document).on 'submit', '#addItemForm', (event) ->
+  event.preventDefault()
+  event.stopPropagation()
+  formData = new FormData()
+  console.log input
+  console.log event
+
 #############################################
 # When the user clicks on one of the thumbnails, grab the relevant information
 # and make a div that gets placed in the shopping cart
@@ -114,8 +126,7 @@ renderPurchaseSummary = (data) ->
   budget      = data.budget.toFixed(2)
   spent       = data.spent.toFixed(2)
   totalPrice  = data.totalcost.toFixed(2)
-  boughtItems = data.bought
-  notbought   = data.notbought
+  boughtItems = data.processed
   $('#purchaseSummary').empty().append """
                   <div class='span3'>
                     <table id='purchasedItems'>
@@ -133,26 +144,11 @@ renderPurchaseSummary = (data) ->
         <tr>
           <td>#{item.name}</td>
           <td>#{item.priority}</td>
-          <td>#{item.buying}</td>
+          <td>#{item.bought}</td>
+          <td>#{item.notbought}</td>
+        </tr>
         """
-    leftovers = $.inArray item, notbought
-    if leftovers >= 0
-      itemRow += "<td>#{notbought[leftovers].buying}</td>"
-    else
-      itemRow += "<td>0</td>"
-    itemRow += "</tr>"
     $('#purchasedItems').append itemRow
-  for item in notbought
-    if $.inArray(item, boughtItems) < 0
-      itemRow = """
-                <tr>
-                  <td>#{item.name}</td>
-                  <td>#{item.priority}</td>
-                  <td>0</td>
-                  <td>#{item.buying}</td>
-                </tr>
-              """
-      $('#purchasedItems').append itemRow
   if $('#purchaseSummary').is(':hidden')
     $('#purchaseSummary').slideDown()
   resultHeight = $('#purchasedItems').height()
@@ -160,12 +156,7 @@ renderPurchaseSummary = (data) ->
   console.log $('#purchaseSummary').height()
   $('html, body').animate({
     scrollTop: $('#purchasedItems').offset().top
-  }, 1000
-#  , () ->
-#    console.log 'triggering'
-#    $('#purchaseSummary').height(resultHeight + 150)
-#    console.log $('#purchaseSummary').height()
-  )
+  }, 1000)
 
 
 

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Application extends Controller {
+    private static String serverPass = System.getenv("play.upload");
 
     /**
      * Render the index page -- all other functions are called by the client
@@ -24,13 +25,6 @@ public class Application extends Controller {
         List<InventoryItem> items = new Model.Finder(String.class, InventoryItem.class).all();
         return ok(index.render(items));
       }
-
-    /**
-     * Render a form to add a new item
-     */
-    public static Result newItem() {
-        return ok(newitem.render());
-    }
 
     /**
      * Add a new inventory item -- the complexity arises from validating an
@@ -43,20 +37,23 @@ public class Application extends Controller {
           String itemName = null;
           Integer quantity = null;
           Double price = null;
+          String password = null;
           try
           {
               itemName = itemProps.get("name")[0];
               quantity = Integer.parseInt(itemProps.get("quantity")[0]);
               price    = Double.parseDouble(itemProps.get("price")[0]);
+              password = itemProps.get("password")[0];
+              if (password != Application.serverPass) throw new Exception("Authentication failed");
               FilePart picture = body.getFile("image");
-              if (picture == null || quantity == null || price == null || itemName == null)
+              if (picture == null || quantity == null || price == null || itemName == null || password == null)
               {
-                  throw new Exception("Fields not filled");
+                  throw new Exception("Fill in all fields");
               }
               String contentType = picture.getContentType();
               String[] formats = {"image/png", "image/jpg", "image/jpeg", "image/gif"};
               List<String> acceptableFormats = Arrays.asList(formats);
-              if (!(acceptableFormats.contains(contentType))) throw new Exception("Unacceptable type");
+              if (!(acceptableFormats.contains(contentType))) throw new Exception("Unacceptable image type");
               File sourceFile = picture.getFile();
               String extension = contentType.split("/")[1];
               if (sourceFile.length() > 100000) throw new Exception("File type is too large");
@@ -81,14 +78,11 @@ public class Application extends Controller {
                       destination.close();
                   }
               }
-              return redirect(routes.Application.newItem());
+              return ok();
           }
           catch(Exception ex)
           {
-              ex.printStackTrace();
-              System.out.println(ex.getMessage());
-              flash("error", "Please fill in all of the fields");
-              return redirect(routes.Application.newItem());
+              return badRequest(ex.getMessage());
           }
       }
 
