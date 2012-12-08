@@ -2,7 +2,8 @@
 # Functions to run on document ready
 #############################################
 $ ->
-  $('#shoppingCart').height($("html").height())
+  console.log $("#inventoryList").height()
+  $('#shoppingCart').height("50px")
 
 #############################################
 # When the user clicks on one of the thumbnails, grab the relevant information
@@ -30,7 +31,12 @@ $(document).on 'click', '.thumbnail', (event) ->
                 </div>
               </div>
               """
-  if not inCartAlready then $("#shoppingCart").append itemEntry
+  if not inCartAlready
+    $("#shoppingCart").append itemEntry
+    $entries = $(".cartEntry")
+    itemHeight = $entries.height()
+    $("#shoppingCart").height("#{(itemHeight * $entries.length) + itemHeight + 15}px")
+
 
 #############################################
 # Function to check whether the new quantity for an item in the cart is valid
@@ -68,10 +74,12 @@ $(document).on 'click', '#checkoutBtn', (event) ->
   event.stopPropagation()
   if $(@).hasClass('disabled') then return
   $('#priorityModal').modal('toggle')
+  totalPrice = 0
   $(".cartEntry").each (index, element) ->
     itemName = $(@).data('name')
     itemPrice = $(@).data('price')
     buying = $(@).children('.numInCart').val()
+    totalPrice += buying * itemPrice
     if $("#priorityTable ##{itemName}").length is 0
       $("#priorityTable").append """
         <tr class='priorityRow' id='#{itemName}' data-name='#{itemName}' data-buying='#{buying}'>
@@ -86,6 +94,10 @@ $(document).on 'click', '#checkoutBtn', (event) ->
           </td>
         </tr>
       """
+    else
+      $("#priorityTable ##{itemName}").data("buying", "#{buying}")
+  if $('.modal-footer .subtotal').length isnt 0 then $('.modal-footer .subtotal').remove()
+  $('.modal-footer .control-group').append "<span class='add-on subtotal'>Cart Total: $#{totalPrice.toFixed(2)}</span>"
 
 
 #############################################
@@ -99,10 +111,65 @@ renderPurchaseSummary = (data) ->
     console.log "There was an error"
     console.log data
     return
-  budget = data.budget
-  value  = data.value
-  spent  = data.spent
-  buying = data.buying
+  budget      = data.budget.toFixed(2)
+  spent       = data.spent.toFixed(2)
+  totalPrice  = data.totalcost.toFixed(2)
+  boughtItems = data.bought
+  notbought   = data.notbought
+  $('#purchaseSummary').empty().append """
+                  <div class='span3'>
+                    <table id='purchasedItems'>
+                      <tr>
+                        <th>Name</th>
+                        <th>Priority</th>
+                        <th># Bought</th>
+                        <th># Over Budget</th>
+                      </tr>
+                    </table>
+                  </div>
+                  """
+  for item in boughtItems
+    itemRow = """
+        <tr>
+          <td>#{item.name}</td>
+          <td>#{item.priority}</td>
+          <td>#{item.buying}</td>
+        """
+    leftovers = $.inArray item, notbought
+    if leftovers >= 0
+      itemRow += "<td>#{notbought[leftovers].buying}</td>"
+    else
+      itemRow += "<td>0</td>"
+    itemRow += "</tr>"
+    $('#purchasedItems').append itemRow
+  for item in notbought
+    if $.inArray(item, boughtItems) < 0
+      itemRow = """
+                <tr>
+                  <td>#{item.name}</td>
+                  <td>#{item.priority}</td>
+                  <td>0</td>
+                  <td>#{item.buying}</td>
+                </tr>
+              """
+      $('#purchasedItems').append itemRow
+  if $('#purchaseSummary').is(':hidden')
+    $('#purchaseSummary').slideDown()
+  resultHeight = $('#purchasedItems').height()
+  console.log resultHeight
+  console.log $('#purchaseSummary').height()
+  $('html, body').animate({
+    scrollTop: $('#purchasedItems').offset().top
+  }, 1000
+#  , () ->
+#    console.log 'triggering'
+#    $('#purchaseSummary').height(resultHeight + 150)
+#    console.log $('#purchaseSummary').height()
+  )
+
+
+
+
 
 #############################################
 # Double check that the user entered the necessary information and then
@@ -144,4 +211,4 @@ $(document).on 'click', '#startShopping', (event) ->
       contentType : 'application/json'
       type : 'POST'
       success: (data) ->
-        console.log data
+        renderPurchaseSummary data
