@@ -58,7 +58,7 @@
                 <h5 class="muted">This feature requires authentication</h5>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" id="addItemForm">
+                <form class="form-horizontal" id="addItemForm" action="" enctype="multipart/form-data">
                     <div class="control-group">
                         <label class="control-label" for="name">Item Name</label>
                         <div class="controls">
@@ -76,7 +76,7 @@
                         <div class="controls">
                             <div class="input-prepend">
                                 <span class="add-on">$</span>
-                                <input type="number" id="price" placeholder="1.99">
+                                <input type="number" step="any" id="price" placeholder="1.99">
                             </div>
                         </div>
                     </div>

@@ -14,13 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class Application extends Controller {
-    private static String serverPass = System.getenv("play.upload");
+public class Application extends Controller{
+    private static String serverPass = System.getenv("PLAYUPLOAD");
 
-    /**
-     * Render the index page -- all other functions are called by the client
-     * @return
-     */
+/**
+ * Render the index page -- all other functions are called by the client
+ * @return
+ */
       public static Result index() {
         List<InventoryItem> items = new Model.Finder(String.class, InventoryItem.class).all();
         return ok(index.render(items));
@@ -44,7 +44,8 @@ public class Application extends Controller {
               quantity = Integer.parseInt(itemProps.get("quantity")[0]);
               price    = Double.parseDouble(itemProps.get("price")[0]);
               password = itemProps.get("password")[0];
-              if (password != Application.serverPass) throw new Exception("Authentication failed");
+              System.out.println("server " + serverPass +" client " +password +" equal? " +serverPass.equals(password));
+              if ( ! (password.equals(serverPass)) ) throw new Exception("Authentication failed");
               FilePart picture = body.getFile("image");
               if (picture == null || quantity == null || price == null || itemName == null || password == null)
               {
@@ -78,7 +79,7 @@ public class Application extends Controller {
                       destination.close();
                   }
               }
-              return ok();
+              return ok(toJson(newItem));
           }
           catch(Exception ex)
           {

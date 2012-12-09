@@ -2,20 +2,83 @@
 # Functions to run on document ready
 #############################################
 $ ->
-  console.log $("#inventoryList").height()
   $('#shoppingCart').height("50px")
 
-$(document).on 'click', '#addItem', (event) ->
-  event.stopPropagation()
-  event.preventDefault()
-  $('#addItemModal').modal()
+  #############################################
+  # Change the prices in the thumbnail to proper dollar values
+  #############################################
+  $('.thumbnail').each (index, element) ->
+    $small = $(element).children('div').children('h4').children('small')
+    value = +"#{$small.text()}"
+    $small.text("$#{value.toFixed(2)}")
 
-$(document).on 'submit', '#addItemForm', (event) ->
-  event.preventDefault()
-  event.stopPropagation()
-  formData = new FormData()
-  console.log input
-  console.log event
+  #############################################
+  # Trigger the modal that displays the 'add new item' form
+  #############################################
+  $(document).on 'click', '#addItem', (event) ->
+    event.stopPropagation()
+    event.preventDefault()
+    $('#addItemModal').modal()
+
+  #############################################
+  # Add a new inventory item
+  # Do a simple verification of the form data, and then post
+  # it via an ajax request.  If successful, make a new thumbnail for
+  # the item, else display the error in the modal so the user can
+  # fix it
+  #############################################
+  $('#addItemForm').submit (event) ->
+    event.preventDefault()
+    data = new FormData($('#addItemForm')[0])
+    data.append('image', $('#image')[0].files[0])
+    data.append('name', $('#name').val())
+    data.append('quantity', $('#quantity').val())
+    data.append('price', $('#price').val())
+    data.append('password', $('#password').val())
+    everythingOK = true
+    $('#addItemForm input').each (index, element) ->
+      value = $(element).val()
+      if not value
+        everythingOK = false
+        $(element).tooltip({
+        title: 'Please fill in the field'
+        placement: 'right'
+        }).tooltip('show')
+    if everythingOK
+      $.ajax
+        url         : '/add/an/item'
+        data        : data
+        type        : 'POST'
+        contentType : false
+        cache       : false
+        processData : false
+        error       : (jqXHR, textStatus, errorThrown) ->
+          $('#addItemModal').append """
+            <div class="modal-footer alert alert-error" style="display:none;">
+              <h3>#{jqXHR.statusText}</h3><h4>#{jqXHR.responseText}</h4>
+            </div>
+                                    """
+          $('#addItemModal .modal-footer').fadeIn('slow')
+        success     : (data) ->
+          newItem = """
+            <li class="span3" id="itemThumbnail">
+              <div class="thumbnail" data-name="#{data.name}" data-quantity="#{data.quantity}" data-price="#{data.price}">
+                <img src="#{data.imgPath}" />
+                <div style="text-align: center">
+                  <h4>
+                    #{data.name}
+                    <small>
+                      $#{data.price.toFixed(2)}
+                    </small>
+                  </h4>
+                  <p>Quantity: #{data.quantity}</p>
+                </div>
+              </div>
+            </li>
+          """
+          $('.thumbnails').append(newItem)
+          $('#addItemForm')[0].reset()
+          $('#addItemModal').modal('toggle')
 
 #############################################
 # When the user clicks on one of the thumbnails, grab the relevant information
@@ -26,7 +89,7 @@ $(document).on 'click', '.thumbnail', (event) ->
   event.stopPropagation()
   $item = $(@)
   itemName = $item.data('name')
-  itemPrice = $item.data('price')
+  itemPrice = +"#{$item.data('price')}"
   itemQuantity = $item.data('quantity')
   inCartAlready = false
   $('#checkoutBtn').removeClass('disabled')
@@ -38,7 +101,7 @@ $(document).on 'click', '.thumbnail', (event) ->
                 <div class='pull-left itemSummary'>
                   <button class="close pull-left removeItem">&times;</button>
                   <h4>#{itemName}
-                    <small>#{itemPrice}</small>
+                    <small>$#{itemPrice.toFixed(2)}</small>
                   </h4>
                 </div>
               </div>
@@ -126,26 +189,37 @@ renderPurchaseSummary = (data) ->
   budget      = data.budget.toFixed(2)
   spent       = data.spent.toFixed(2)
   totalPrice  = data.totalcost.toFixed(2)
-  boughtItems = data.processed
+  results     = data.processed
   $('#purchaseSummary').empty().append """
-                  <div class='span3'>
-                    <table id='purchasedItems'>
-                      <tr>
-                        <th>Name</th>
-                        <th>Priority</th>
-                        <th># Bought</th>
-                        <th># Over Budget</th>
-                      </tr>
-                    </table>
-                  </div>
+                  <div class='span6'>
+                    <ul class="inline">
+                      <li>
+                        <h4>Your initial budget: <small>${budget}</small></h4>
+                      </li>
+                      <li>
+                        <h4>You will spend: <small>${spent}</small></h4>
+                      </li>
+                      <li>
+                        <h4>Cost of your selection: <small>${totalPrice}</small></h4>
+                      </li>
+                    </ul>
+                    <div class='span2'>
+                      <ul class="unstyled" id="highPriority"></ul>
+                    </div>
+                    <div class="span2">
+                      <ul class="unstyled" id="neutralPriority"></ul>
+                    </div>
+                    <div class="span2">
+                      <ul class="unstyled" id="lowPriority"></ul>
+                    </div>
                   """
-  for item in boughtItems
+  for item in results
     itemRow = """
         <tr>
           <td>#{item.name}</td>
           <td>#{item.priority}</td>
-          <td>#{item.bought}</td>
-          <td>#{item.notbought}</td>
+          <td>#{item.bought or 0}</td>
+          <td>#{item.notbought or 0}</td>
         </tr>
         """
     $('#purchasedItems').append itemRow
