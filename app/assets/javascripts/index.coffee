@@ -191,45 +191,53 @@ renderPurchaseSummary = (data) ->
   totalPrice  = data.totalcost.toFixed(2)
   results     = data.processed
   $('#purchaseSummary').empty().append """
-                  <div class='span6'>
-                    <ul class="inline">
-                      <li>
-                        <h4>Your initial budget: <small>${budget}</small></h4>
-                      </li>
-                      <li>
-                        <h4>You will spend: <small>${spent}</small></h4>
-                      </li>
-                      <li>
-                        <h4>Cost of your selection: <small>${totalPrice}</small></h4>
-                      </li>
-                    </ul>
-                    <div class='span2'>
-                      <ul class="unstyled" id="highPriority"></ul>
-                    </div>
-                    <div class="span2">
-                      <ul class="unstyled" id="neutralPriority"></ul>
-                    </div>
-                    <div class="span2">
-                      <ul class="unstyled" id="lowPriority"></ul>
-                    </div>
+        <div class='span6'>
+          <ul class="inline">
+            <li>
+              <h4>Your initial budget: <small>$#{budget}</small></h4>
+            </li>
+            <li>
+              <h4>You will spend: <small>$#{spent}</small></h4>
+            </li>
+            <li>
+              <h4>Cost of your selection: <small>$#{totalPrice}</small></h4>
+            </li>
+          </ul>
+          <hr class="summarySeparator">
+          <div class='span2 priorities'>
+            <p><span class="label label-success">High Priority items</span></h4>
+            <ul class="unstyled" id="highPriority"></ul>
+          </div>
+          <div class="span2 priorities">
+            <p><span class="label label-default">Neutral Priority items</span></p>
+            <ul class="unstyled" id="neutralPriority"></ul>
+          </div>
+          <div class="span2 priorities">
+            <p><span class="label label-info">Low Priority items</span></p>
+            <ul class="unstyled" id="lowPriority"></ul>
+          </div>
                   """
   for item in results
-    itemRow = """
-        <tr>
-          <td>#{item.name}</td>
-          <td>#{item.priority}</td>
-          <td>#{item.bought or 0}</td>
-          <td>#{item.notbought or 0}</td>
-        </tr>
+    switch item.priority
+      when 1 then target = "#lowPriority"
+      when 2 then target = "#neutralPriority"
+      when 3 then target = "#highPriority"
+      else console.log "something happened!"
+    itemReport = """
+        <li class="bought">
+          <dl class="dl-horizontal">
+            <dt>#{item.name}</dt>
         """
-    $('#purchasedItems').append itemRow
+    if item.bought? and item.bought > 0
+      itemReport += "<dd><span class='badge badge-success'>#{item.bought}</span></dd>"
+    if item.notbought? and item.notbought > 0
+      itemReport += "<dd><span class='badge badge-important'>#{item.notbought}</span></dd>"
+    itemReport += "</dl></li>"
+    $(target).append(itemReport)
   if $('#purchaseSummary').is(':hidden')
     $('#purchaseSummary').slideDown()
-  resultHeight = $('#purchasedItems').height()
-  console.log resultHeight
-  console.log $('#purchaseSummary').height()
   $('html, body').animate({
-    scrollTop: $('#purchasedItems').offset().top
+    scrollTop: $('#purchaseSummary').offset().top
   }, 1000)
 
 
