@@ -24,7 +24,7 @@ import java.util.Map;
 public class ShoppingCart extends Controller
 {
     /**
-     * Render the index page -- all other functions are called by the client
+     * Extract the information from the request and pass it to the Shopper object
      * @return
      */
     @BodyParser.Of(BodyParser.Json.class)

@@ -191,7 +191,7 @@ renderPurchaseSummary = (data) ->
   totalPrice  = data.totalcost.toFixed(2)
   results     = data.processed
   $('#purchaseSummary').empty().append """
-        <div class='span6'>
+        <div class='span10 offset2'>
           <ul class="inline">
             <li>
               <h4>Your initial budget: <small>$#{budget}</small></h4>
@@ -204,19 +204,26 @@ renderPurchaseSummary = (data) ->
             </li>
           </ul>
           <hr class="summarySeparator">
-          <div class='span2 priorities'>
-            <p><span class="label label-success">High Priority items</span></h4>
-            <ul class="unstyled" id="highPriority"></ul>
+          <div class="row">
+            <div class='span2 offset1 priorities'>
+              <p><span class="label label-success">High Priority items</span></h4>
+              <ul class="unstyled" id="highPriority"></ul>
+            </div>
+            <div class="span2 offset1 priorities">
+              <p><span class="label label-default">Neutral Priority items</span></p>
+              <ul class="unstyled" id="neutralPriority"></ul>
+            </div>
+            <div class="span2 offset1 priorities">
+              <p><span class="label label-info">Low Priority items</span></p>
+              <ul class="unstyled" id="lowPriority"></ul>
+            </div>
+            <div class="span2"></div>
           </div>
-          <div class="span2 priorities">
-            <p><span class="label label-default">Neutral Priority items</span></p>
-            <ul class="unstyled" id="neutralPriority"></ul>
-          </div>
-          <div class="span2 priorities">
-            <p><span class="label label-info">Low Priority items</span></p>
-            <ul class="unstyled" id="lowPriority"></ul>
-          </div>
+        </div>
+        <div id="purchaseSummaryChart"></div>
                   """
+  values = []
+  labels = []
   for item in results
     switch item.priority
       when 1 then target = "#lowPriority"
@@ -229,11 +236,17 @@ renderPurchaseSummary = (data) ->
             <dt>#{item.name}</dt>
         """
     if item.bought? and item.bought > 0
+      spentOnItem = (parseInt(item.bought) * parseFloat(item.price)).toFixed(2)
+      values.push +spentOnItem
+      labels.push "#{item.name}"
       itemReport += "<dd><span class='badge badge-success'>#{item.bought}</span></dd>"
     if item.notbought? and item.notbought > 0
       itemReport += "<dd><span class='badge badge-important'>#{item.notbought}</span></dd>"
     itemReport += "</dl></li>"
     $(target).append(itemReport)
+    width = 600
+    height = width
+  Raphael("purchaseSummaryChart", width, height).pieChart(width / 2, width / 2, 200, values, labels, "#fff");
   if $('#purchaseSummary').is(':hidden')
     $('#purchaseSummary').slideDown()
   $('html, body').animate({

@@ -60,26 +60,32 @@ body{
     background-repeat: repeat-x;
     background-color: #3E413E;
     display: none;
-    height: 750px;
-    width: 150%;
+    height: 900px;
+    width: 110%;
     margin-left: -30px;
     padding-top: 100px;
-    padding-left: 16%;
     color: #eeeeee;
 }
 #addItemForm #price{
     width: 180px;
 }
+#addItemModal .close {
+    padding-right: 10px;
+}
 
 .inline li{
     display: inline-block;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 30px;
 }
 .bought dl, .notbought dl{
-    margin-left: -70%;
+    margin-left: -60%;
 }
-.priorities {
-    margin-left: 10%;
-    margin-right: 10%
+.summarySeparator {
+    width: 80%;
+}
+#purchaseSummaryChart {
+    margin-left: 30%;
+}
+#purchaseSummaryChart svg {
+    margin-top: -3%;
 }

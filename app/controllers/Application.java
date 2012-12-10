@@ -44,7 +44,6 @@ public class Application extends Controller{
               quantity = Integer.parseInt(itemProps.get("quantity")[0]);
               price    = Double.parseDouble(itemProps.get("price")[0]);
               password = itemProps.get("password")[0];
-              System.out.println("server " + serverPass +" client " +password +" equal? " +serverPass.equals(password));
               if ( ! (password.equals(serverPass)) ) throw new Exception("Authentication failed");
               FilePart picture = body.getFile("image");
               if (picture == null || quantity == null || price == null || itemName == null || password == null)

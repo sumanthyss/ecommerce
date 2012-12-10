@@ -1,7 +1,5 @@
 package models;
 
-import com.mysql.jdbc.Blob;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.db.ebean.Model;
 import play.libs.Json;
@@ -12,11 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: epanahi
- * Date: 11/27/12
- * Time: 6:48 PM
- * To change this template use File | Settings | File Templates.
+ * The basic model for an item we're dealing with.
  */
 @Entity
 public class InventoryItem extends Model
