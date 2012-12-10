@@ -20,7 +20,7 @@ public class InventoryItem extends Model
         this.name = name;
         this.price = price;
         this.quantity = quantity;
-        this.imgPath = "/assets/images/" +this.name +"." +extension;
+        this.imgPath = "assets/images/" +this.name +"." +extension;
     }
     @Id
     public String name;
