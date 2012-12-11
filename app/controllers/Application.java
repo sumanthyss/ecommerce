@@ -17,7 +17,7 @@ import java.util.Map;
 public class Application extends Controller{
     private static String serverPass = System.getenv("PLAYUPLOAD");
     private static String imgDir     = System.getenv("PLAYIMAGEDIR");
-    private static String imgBase    = System.getenv("PLAYIMAGEPATH")
+    private static String imgBase    = System.getenv("PLAYIMAGEPATH");
 
 /**
  * Render the index page -- all other functions are called by the client
@@ -68,7 +68,7 @@ public class Application extends Controller{
               {
                   imageURI = "assets/images/" +itemName +"." +extension;
               }
-              InventoryItem newItem = new InventoryItem(itemName, price, quantity, extension);
+              InventoryItem newItem = new InventoryItem(itemName, price, quantity, imageURI);
               newItem.save();
               File destFile = null;
               if (imgDir != null)
