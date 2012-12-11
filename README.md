@@ -1,5 +1,4 @@
-Shopping Cart Sim
-=====================================
+# Shopping Cart Sim
 
 ## About
 
