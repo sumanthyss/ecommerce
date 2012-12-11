@@ -16,6 +16,8 @@ import java.util.Map;
 
 public class Application extends Controller{
     private static String serverPass = System.getenv("PLAYUPLOAD");
+    private static String imgDir     = System.getenv("PLAYIMAGEDIR");
+    private static String imgBase    = System.getenv("PLAYIMAGEPATH")
 
 /**
  * Render the index page -- all other functions are called by the client
@@ -57,9 +59,22 @@ public class Application extends Controller{
               File sourceFile = picture.getFile();
               String extension = contentType.split("/")[1];
               if (sourceFile.length() > 100000) throw new Exception("File type is too large");
+              String imageURI = "";
+              if (imgBase != null)
+              {
+                  imageURI = imgBase + itemName +"." +extension;
+              }
+              else
+              {
+                  imageURI = "assets/images/" +itemName +"." +extension;
+              }
               InventoryItem newItem = new InventoryItem(itemName, price, quantity, extension);
               newItem.save();
-              File destFile = new File("public/images/" +itemName +"." +extension);
+              File destFile = null;
+              if (imgDir != null)
+                  destFile = new File(imgDir +itemName +"." +extension);
+              else
+                destFile = new File("public/images/" +itemName +"." +extension);
               if(!destFile.exists()) destFile.createNewFile();
 
               FileChannel source = null;
