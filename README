@@ -3,6 +3,8 @@ Shopping Cart Sim
 
 ## About
 
+You can see the live version [here](http://cs232.epanahi.com)
+
 The purpose of ShoppingCart is 1) a final project for CS 232 and 2) to learn how to build a web application in java.  This app is built on the [Play!](http://www.playframework.org/) framework.  In the code you will find examples of :
 * Using a jdbc adapter to access a database (H2 in development, MySQL in production)
 * Skeletal views built in HTML with some Scala thrown in
