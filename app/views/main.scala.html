@@ -22,30 +22,29 @@
                     <ul class="nav">
                         <li class="active"><a href="/">Main Application</a></li>
                         <li><a id="addItem" href="#">Add an item</a></li>
-                        <li><a href="https://github.com/panahi/ShoppingCart">See the code on GitHub</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         @content
-        <div id="priorityModal" class="modal hide fade">
+        <div id="summaryModal" class="modal hide fade">
             <div class="modal-header alert-info">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4>Choose the priority for the items in your cart</h4>
+                <!--<h4>Choose the priority for the items in your cart</h4>-->
             </div>
             <div class="modal-body well">
-                <table class="table" id="priorityTable">
+                <table class="table" id="summaryTable">
                     <tr>
                         <th>Item</th>
                         <th>Price</th>
-                        <th>Priority</th>
+                        <!--<th>Priority</th>-->
                     </tr>
                 </table>
             </div>
             <div class="modal-footer">
                 <div class="input-prepend input-append pull-left control-group">
                     <span class="add-on">$</span>
-                    <input class="span2" id="budgetInput" type="text" placeholder="Enter your budget">
+                    <!--<input class="span2" id="budgetInput" type="text" placeholder="Enter your budget">-->
                 </div>
                 <div class="pull-right">
                     <a href="#" class="btn btn-warning" data-dismiss="modal">Cancel</a>

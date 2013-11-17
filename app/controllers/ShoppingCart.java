@@ -30,16 +30,16 @@ public class ShoppingCart extends Controller
     @BodyParser.Of(BodyParser.Json.class)
     public static Result goShopping() {
         JsonNode json = request().body().asJson();
-        Double budget = json.get("budget").asDouble();
+        // Double budget = json.get("budget").asDouble();
         ArrayNode items = (ArrayNode) json.get("items");
 
-        ObjectNode result = Shopper.goShopping(items, budget);
+        // ObjectNode result = Shopper.goShopping(items, budget);
 
-        String returnCode = result.remove("status").asText();
-        if(returnCode.equals("OK")){
-            return ok(result);
-        } else {
-            return badRequest(result);
-        }
+        // String returnCode = result.remove("status").asText();
+        // if(returnCode.equals("OK")){
+            return ok(/*result*/items);
+        // } else {
+            // return badRequest(result);
+        // }
     }
 }

@@ -148,113 +148,31 @@ $(document).on 'click', '#checkoutBtn', (event) ->
   event.preventDefault()
   event.stopPropagation()
   if $(@).hasClass('disabled') then return
-  $('#priorityModal').modal('toggle')
+  $('#summaryModal').modal('toggle')
   totalPrice = 0
   $(".cartEntry").each (index, element) ->
     itemName = $(@).data('name')
     itemPrice = $(@).data('price')
     buying = $(@).children('.numInCart').val()
     totalPrice += buying * itemPrice
-    if $("#priorityTable ##{itemName}").length is 0
-      $("#priorityTable").append """
+    if $("#summaryTable ##{itemName}").length is 0
+      $("#summaryTable").append """
         <tr class='priorityRow' id='#{itemName}' data-name='#{itemName}' data-buying='#{buying}'>
           <td><strong>#{itemName}</strong></td>
           <td>#{itemPrice}</td>
-          <td class='priorityButtons'>
+          <!--<td class='priorityButtons'>
             <div class="btn-group" data-toggle="buttons-radio">
               <button type="button" class="btn btn-small btn-info">Low</button>
               <button type="button" class="btn btn-small btn-info active">Neutral</button>
               <button type="button" class="btn btn-small btn-info">High</button>
             </div>
-          </td>
+          </td>-->
         </tr>
       """
     else
-      $("#priorityTable ##{itemName}").data("buying", "#{buying}")
+      $("#summaryTable ##{itemName}").data("buying", "#{buying}")
   if $('.modal-footer .subtotal').length isnt 0 then $('.modal-footer .subtotal').remove()
   $('.modal-footer .control-group').append "<span class='add-on subtotal'>Cart Total: $#{totalPrice.toFixed(2)}</span>"
-
-
-#############################################
-# This is going to be the callback to the 'go shopping' ajax event
-# It needs to get the purchase information from the server and render
-# a summary
-#############################################
-renderPurchaseSummary = (data) ->
-  resultStatus = data.status
-  if resultStatus is 'KO'
-    console.log "There was an error"
-    console.log data
-    return
-  budget      = data.budget.toFixed(2)
-  spent       = data.spent.toFixed(2)
-  totalPrice  = data.totalcost.toFixed(2)
-  results     = data.processed
-  $('#purchaseSummary').empty().append """
-        <div class='span10 offset2'>
-          <ul class="inline">
-            <li>
-              <h4>Your initial budget: <small>$#{budget}</small></h4>
-            </li>
-            <li>
-              <h4>You will spend: <small>$#{spent}</small></h4>
-            </li>
-            <li>
-              <h4>Cost of your selection: <small>$#{totalPrice}</small></h4>
-            </li>
-          </ul>
-          <hr class="summarySeparator">
-          <div class="row">
-            <div class='span2 offset1 priorities'>
-              <p><span class="label label-success">High Priority items</span></h4>
-              <ul class="unstyled" id="highPriority"></ul>
-            </div>
-            <div class="span2 offset1 priorities">
-              <p><span class="label label-default">Neutral Priority items</span></p>
-              <ul class="unstyled" id="neutralPriority"></ul>
-            </div>
-            <div class="span2 offset1 priorities">
-              <p><span class="label label-info">Low Priority items</span></p>
-              <ul class="unstyled" id="lowPriority"></ul>
-            </div>
-            <div class="span2"></div>
-          </div>
-        </div>
-        <div id="purchaseSummaryChart"></div>
-                  """
-  values = []
-  labels = []
-  for item in results
-    switch item.priority
-      when 1 then target = "#lowPriority"
-      when 2 then target = "#neutralPriority"
-      when 3 then target = "#highPriority"
-      else console.log "something happened!"
-    itemReport = """
-        <li class="bought">
-          <dl class="dl-horizontal">
-            <dt>#{item.name}</dt>
-        """
-    if item.bought? and item.bought > 0
-      spentOnItem = (parseInt(item.bought) * parseFloat(item.price)).toFixed(2)
-      values.push +spentOnItem
-      labels.push "#{item.name}"
-      itemReport += "<dd><span class='badge badge-success'>#{item.bought}</span></dd>"
-    if item.notbought? and item.notbought > 0
-      itemReport += "<dd><span class='badge badge-important'>#{item.notbought}</span></dd>"
-    itemReport += "</dl></li>"
-    $(target).append(itemReport)
-    width = 600
-    height = width
-  Raphael("purchaseSummaryChart", width, height).pieChart(width / 2, width / 2, 200, values, labels, "#fff");
-  if $('#purchaseSummary').is(':hidden')
-    $('#purchaseSummary').slideDown()
-  $('html, body').animate({
-    scrollTop: $('#purchaseSummary').offset().top
-  }, 1000)
-
-
-
 
 
 #############################################
@@ -264,37 +182,14 @@ renderPurchaseSummary = (data) ->
 $(document).on 'click', '#startShopping', (event) ->
   event.preventDefault()
   event.stopPropagation()
-  budget = $("#budgetInput").val()
-  budget = +budget
-  if not budget
-    $('#priorityModal .control-group').addClass('error')
-    $('#budgetInput').tooltip({
-      title: 'Enter your balance'
-    }).tooltip('show')
-  else
-    $('#priorityModal .control-group').removeClass('error')
-    $('#budgetInput').tooltip('destroy')
-    $('#priorityModal').modal('toggle')
-    url = "/checkout"
-    resultObj =
-      budget: budget
-      items : []
-    $('.priorityRow').each (index, element) ->
-      elementObj = {}
-      elementObj.name = $(element).data 'name'
-      elementObj.buying = $(element).data 'buying'
-      priorityText = $(element).children('.priorityButtons')
-                              .children().children('.active').text()
-      switch priorityText
-        when 'Low' then elementObj.priority = 1
-        when 'Neutral' then elementObj.priority = 2
-        when 'High' then elementObj.priority = 3
-        else elementObj.priority = 0
-
-      resultObj.items.push elementObj
-    $.ajax url,
-      data : JSON.stringify(resultObj)
-      contentType : 'application/json'
-      type : 'POST'
-      success: (data) ->
-        renderPurchaseSummary data
+  $('#summaryModal').modal('toggle')
+  $('#purchaseSummary').empty().append """
+      <h1 style="text-align:center">Thank you for your purchase</h1>
+  """
+  if $('#purchaseSummary').is(':hidden')
+    $('#purchaseSummary').slideDown()
+  $('html, body').animate({
+    scrollTop: $('#purchaseSummary').offset().top
+  }, 1000)  
+  
+   

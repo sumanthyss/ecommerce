@@ -46,10 +46,10 @@ body{
   margin-bottom: 2px;
   padding-top: 4px;
 }
-#priorityTable th , #priorityTable td{
+#summaryTable th , #summaryTable td{
   text-align: center;
 }
-#priorityModal .well {
+#summaryModal .well {
   margin-bottom: 0px;
 }
 #shoppingCartContainer {
